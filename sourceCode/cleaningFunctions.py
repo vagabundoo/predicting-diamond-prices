@@ -1,5 +1,7 @@
 from sklearn.base import TransformerMixin
 from sklearn.preprocessing import MinMaxScaler
+import pandas as pd
+
 
 cut_ranks = {
     "Fair": 0,
@@ -22,9 +24,11 @@ clarity_ranks = {'I1': 0, ' SI2': 1, ' SI1': 2, ' VS2': 3,
 
 
 class CleanDiamonds(TransformerMixin):
-    def __init__(self):
+    def __init__(self, df):
         self.features = ['id', 'carat', 'cut', 'color',
                          'clarity', 'depth', 'table', 'x', 'y', 'z']
+        self.df = df
+        self.X = self.df[self.features]
 
     # def fit_ordinal(self, X):
     #     # Get only interesting data
@@ -37,10 +41,10 @@ class CleanDiamonds(TransformerMixin):
     #     X['clarity'] = X['clarity'].map(clarity_ranks)
     #     return self
 
-    def fit(self, X):
-        X = df[self.features]
+    def fit(self):
+        X = self.X
         # Replace cut with integers (ranked from worst to best)
-        X['cut'] = X['cut'].map(cut_nums)
+        X['cut'] = X['cut'].map(cut_ranks)
         # Replace color with with integers (ranked from worst to best)
         X['color'] = X['color'].map(color_ranks)
         # Replace clarity with integers (ranked from worst to best)
@@ -63,5 +67,5 @@ class CleanDiamonds(TransformerMixin):
     #         data=scaler.fit_transform(X[['carat', 'depth', 'x', 'y', 'z']]))
     #     return self
 
-    def transform(self, df):
+    def transform(self):
         return self.X
